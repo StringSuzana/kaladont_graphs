@@ -10,6 +10,8 @@ import math
 import matplotlib.pyplot as plt
 from pandas import DataFrame
 import time
+import csv
+import networkx as nx
 
 
 class Word:
@@ -47,14 +49,38 @@ if __name__ == '__main__':
     nitrati = Word('nitrati', False)
     virulentni = Word('virulentni', False)
 
-    graph = {kivi: {viroza, visoki},
-             viroza: {zarazni, virulentni},
-             zarazni: {niski, nitrati},
-             niski: {kivi},
-             visoki: {kivi},
-             nitrati: {},
-             virulentni: {niski, nitrati}}
+    graph = {'kivi': {'viroza', 'visoki'},
+             'viroza': {'zarazni', 'virulentni'},
+             'zarazni': {'niski', 'nitrati'},
+             'niski': {'kivi'},
+             'visoki': {'kivi'},
+             'nitrati': {},
+             'virulentni': {'niski', 'nitrati'}}
 
-    print_agraph(graph, visoki)
-    df_all_words = pd.read_csv('words_filled.csv')
-    df_all_words
+    graph_objects = {kivi: {viroza, visoki},
+                     viroza: {zarazni, virulentni},
+                     zarazni: {niski, nitrati},
+                     niski: {kivi},
+                     visoki: {kivi},
+                     nitrati: {},
+                     virulentni: {niski, nitrati}}
+
+
+    G = nx.DiGraph()
+    G.add_nodes_from(graph_objects)
+    for e in graph_objects:
+        for z in graph[e.w]:
+            G.add_edge(e.w, z)
+    # G.add_edges_from([('kivi', 'viroza'), ('kivi', 'visoki')])
+    print(G.nodes())
+    print(G.edges())
+    nx.draw(G, with_labels=True, font_weight='bold')
+    plt.show()
+
+    # print_agraph(graph, visoki)
+    # with open('words_filled.csv', 'r') as file:
+    # reader = csv.reader(file, delimiter=',')
+    # for row in reader:
+    # print(row[1])
+    # df_all_words = pd.read_csv('words_filled.csv')
+    # df_all_words
